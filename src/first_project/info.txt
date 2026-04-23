@@ -1,0 +1,35 @@
+---------------------------------------------------
+Exact integration method (closed-form solution)
+    
+Used when |ω| > threshold. Provides better accuracy for curved motion.
+    
+Formulas:
+    Δx = (v/ω) * (sin(θ_k + ω*dt) - sin(θ_k))
+    Δy = (v/ω) * (cos(θ_k) - cos(θ_k + ω*dt))
+    Δθ = ω * dt
+   
+
+---------------------------------------------------
+Runge-Kutta 2nd order (Midpoint) integration method
+ 
+Used when |ω| is close to zero to avoid numerical instability
+from division by small ω in the exact method.
+
+Algorithm:
+    θ_mid = θ_k + (ω * dt) / 2
+    Δx = v * cos(θ_mid) * dt
+    Δy = v * sin(θ_mid) * dt
+    Δθ = ω * dt
+
+
+---------------------------------------------------
+Adaptive integration method
+
+Selects the best method based on angular velocity magnitude:
+- If |ω| > threshold: Use exact integration (better for curves)
+- If |ω| ≤ threshold: Use Runge-Kutta 2 (avoid singularities)
+
+Returns the method used for logging/debugging
+
+
+---------------------------------------------------
