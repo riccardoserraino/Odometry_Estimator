@@ -13,7 +13,7 @@ A ROS 2 package implementing wheel odometry for the **Agile-X Bunker Pro** track
 | Package name | `first_project` |
 | Language | C++ |
 | ROS version | ROS 2 |
-| Robot | Agile-X Bunker Pro (skid-steering / tracked) |
+| Robot | Agile-X Bunker Pro (skid-steering) |
 
 ---
 
@@ -148,8 +148,9 @@ source install/setup.bash
 Open the launch file and set the bag path:
 
 ```python
-# first_project/launch/first_project.launch.py
-default_value='../bags/rosbag2_<number>',   # <-- change this line
+cd first_project/launch/first_project.launch.py
+
+# default_value='../bags/rosbag2_<number>',   # <-- change this line
 ```
 
 **Launch the project**
