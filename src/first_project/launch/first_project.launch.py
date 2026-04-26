@@ -20,12 +20,12 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'bag_path',
-            default_value='../bags/rosbag2_1',
+            default_value='../bags/rosbag2_6',
             description='Path of rosbag to play'
         ),
 
         ExecuteProcess(
-            cmd=['ros2', 'bag', 'play', bag_path, '--clock',  '--rate', '1.2'],
+            cmd=['ros2', 'bag', 'play', bag_path, '--clock',  '--rate', '2.0'],
             output='screen',
         ),
 
