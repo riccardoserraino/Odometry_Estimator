@@ -169,3 +169,9 @@ While the project is running:
 ```bash
 ros2 service call /reset_odom first_project/srv/Reset "{reset: true}"
 ```
+
+---
+
+## Notes
+The project has been developed with container provided by the course of Robotics, find it at the following link:
+[Robotics Course](https://github.com/AIRLab-POLIMI/robotics-ros2.git)
