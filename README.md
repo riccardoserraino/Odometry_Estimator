@@ -1,5 +1,6 @@
 # Odometry Estimator - Skid Steering
 **Authors**: Riccardo Serraino, Giuliano Livi
+
 First Robotics Project - Politecnico di Milano
 
 A ROS 2 package implementing wheel odometry for the **Agile-X Bunker Pro** tracked robot, along with a ground-truth error evaluation node.
