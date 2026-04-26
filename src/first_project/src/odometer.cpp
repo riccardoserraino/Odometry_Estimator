@@ -8,7 +8,12 @@
 #include "nav_msgs/msg/odometry.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 #include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Matrix3x3.h"
+#include "tf2/time.h"
+#include "tf2/exceptions.h"
 #include "first_project/srv/reset.hpp"
 
 
@@ -31,6 +36,9 @@ public:
     publisher_ = this->create_publisher<nav_msgs::msg::Odometry>("/project_odom", 10);
 
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+
+    tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
     
     service_ = this->create_service<first_project::srv::Reset>(
       "reset_odom",
@@ -59,9 +67,9 @@ private:
   double vx_real_, omega_real_;
 
   // ── Configuration
-  const double omega_threshold_ = 1e-4;
-  const double wheel_base_ = 0.710; //0.635
-  const double wheel_radius_ = 0.083; //0.127
+  const double omega_threshold_ = 1e-3;
+  const double wheel_base_ = 0.710; 
+  const double wheel_radius_ = 0.0835; 
   const double gr_ = 7.5;
 
 
@@ -70,6 +78,8 @@ private:
   rclcpp::Subscription<bunker_msgs::msg::BunkerStatus>::SharedPtr subscription_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr publisher_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   rclcpp::Service<first_project::srv::Reset>::SharedPtr service_;
 
 
@@ -123,8 +133,21 @@ private:
     rclcpp::Time current_time = this->get_clock()->now();
 
     if (!initialized_) {
+      // Initialize pose from ground truth base_link
+      try {
+        geometry_msgs::msg::TransformStamped base_link_tf = tf_buffer_->lookupTransform("odom", "base_link", tf2::TimePoint());
+        x_ = base_link_tf.transform.translation.x;
+        y_ = base_link_tf.transform.translation.y;
+        tf2::Quaternion q(base_link_tf.transform.rotation.x, base_link_tf.transform.rotation.y, base_link_tf.transform.rotation.z, base_link_tf.transform.rotation.w);
+        double roll, pitch;
+        tf2::Matrix3x3(q).getRPY(roll, pitch, theta_);
+        initialized_ = true;
+        RCLCPP_INFO(this->get_logger(), "Initialized odometry from ground truth: x=%.3f y=%.3f theta=%.3f", x_, y_, theta_);
+      } catch (const tf2::TransformException & ex) {
+        RCLCPP_WARN(this->get_logger(), "Waiting for base_link TF: %s", ex.what());
+        return;
+      }
       last_time_ = current_time;
-      initialized_ = true;
       return;
     }
 
@@ -165,10 +188,10 @@ private:
     // Publish odometry message
     nav_msgs::msg::Odometry odom;
 
-    // ── Header (required by RViz2)
+    // ── Header
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";
-    odom.child_frame_id = "base_link2";
+    odom.child_frame_id = "base_link";
 
     odom.pose.pose.position.x = x_;
     odom.pose.pose.position.y = y_;
