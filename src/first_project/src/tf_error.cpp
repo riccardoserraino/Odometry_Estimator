@@ -46,12 +46,13 @@ private:
     try {
       base_link  = tf_buffer_->lookupTransform("odom", "base_link", tf2::TimePointZero);
       base_link2 = tf_buffer_->lookupTransform("odom", "base_link2", tf2::TimePointZero);
-    } catch (const tf2::TransformException & ex) {
+    } 
+    catch (const tf2::TransformException & ex) {
       RCLCPP_WARN(this->get_logger(), "Lookup failed: %s", ex.what());
       return;
     }
 
-    auto   ts    = base_link.header.stamp; 
+    auto   ts   = base_link.header.stamp; 
     float x_bl  = base_link.transform.translation.x;
     float y_bl  = base_link.transform.translation.y;
     float x_bl2 = base_link2.transform.translation.x;

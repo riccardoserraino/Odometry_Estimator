@@ -14,18 +14,18 @@ def generate_launch_description():
     rviz_config = os.path.join(
         get_package_share_directory('first_project'),
         'rviz',
-        'rviz_config.rviz'
+        'config.rviz',
     )
 
     return LaunchDescription([
         DeclareLaunchArgument(
             'bag_path',
-            default_value='/home/robotics/bags/p1_record2',
-            description='Percorso cartella rosbag2 da riprodurre'
+            default_value='../bags/rosbag2_1',
+            description='Path of rosbag to play'
         ),
 
         ExecuteProcess(
-            cmd=['ros2', 'bag', 'play', bag_path, '--clock'],
+            cmd=['ros2', 'bag', 'play', bag_path, '--clock',  '--rate', '2.0'],
             output='screen',
         ),
 
