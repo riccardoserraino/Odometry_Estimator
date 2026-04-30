@@ -121,7 +121,6 @@ private:
       x_ = 0.0;
       y_ = 0.0;
       theta_ = 0.0;
-      initialized_ = false;
     }
     response->success = true;
   }

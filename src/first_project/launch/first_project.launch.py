@@ -20,7 +20,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'bag_path',
-            default_value='../bags/rosbag2_6',
+            default_value='../bags/rosbag2_1',
             description='Path of rosbag to play'
         ),
 
